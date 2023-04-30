@@ -28,7 +28,7 @@ const createUser = async (req = request, res = response) => {
         dbUser.password = bcrypt.hashSync( password, salt );
 
         // Generar JWT
-        const token = await generateJWT( dbUser.id, name );
+        const token = await generateJWT( dbUser.id, name, dbUser.email );
 
         // Crear usuario de DB
         await dbUser.save();
@@ -78,7 +78,7 @@ const loginUser = async (req = request, res = response) => {
         }
 
         //Generar JWT
-        const token = await generateJWT( dbUser.id, dbUser.name );
+        const token = await generateJWT( dbUser.id, dbUser.name, dbUser.email );
 
         // Respuesta del servicio
         return res.json({
@@ -102,16 +102,17 @@ const loginUser = async (req = request, res = response) => {
 
 const renewToken = async (req = request, res = response) => {
 
-    const { uid, name } = req;
+    const { uid, name, email } = req;
 
     //Generar JWT
-    const token = await generateJWT(uid, name);
+    const token = await generateJWT(uid, name, email);
 
     return res.json({
         ok: true,
         uid,
         name,
-        token
+        token,
+        email
     });
 }
 
